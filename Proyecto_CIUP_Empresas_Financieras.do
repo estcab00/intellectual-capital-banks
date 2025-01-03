@@ -116,15 +116,13 @@ qui xtregar ROA VAIC SIZE DEBT , re
 estimates store MODEL1
 
 * Model 2
-qui xtregar ROA ICE HCE SCE CCE SIZE DEBT , fe
+qui xtregar ROA HCE SCE CCE SIZE DEBT , fe
 estimates store MODEL2
 
-qui xtregar ROA HCE SCE CCE SIZE DEBT , fe
-estimates store MODEL3
 
 /*** 4. RESULTS */
 
-estimates table RE1A RE2A RE3A RE4A  ,  ///
+estimates table MODEL1 MODEL2,  ///
   stats(N r2_o r2_b r2_w sigma_u sigma_e rho) b(%7.4f) star  
 
 **************************************************************************************
