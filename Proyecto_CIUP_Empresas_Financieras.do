@@ -332,9 +332,9 @@ estimates store RE2
 
 *** 3.3 Hausman tets
 
-hausman FE1 RE1  
-*Reject H0: p-value = 0.01 > 0.05
-*We choose Fixed Effects
+hausman FE1 RE1, sigmamore  
+*Do not reject H0: p-value = 0.21 > 0.05
+*We choose Random Effects
  
 hausman FE2  RE2
 *Do not reject H0: p-value = 0.88 > 0.05
@@ -345,7 +345,7 @@ hausman FE2  RE2
 /* WOOLDRIDGE AUTOCORRELATION TEST */
 
 xtserial ROA VAIC SIZE DEBT, output
-* Do not reject H0: p-value = 0.09 < 0.05
+* Do not reject H0: p-value = 0.09 > 0.05
 * We choose xtreg
 
 xtserial ROA ICE HCE SCE CCE SIZE DEBT, output
@@ -355,7 +355,7 @@ xtserial ROA ICE HCE SCE CCE SIZE DEBT, output
 /* FINAL MODELS */
 
 * Model 1
-qui xtreg ROA VAIC SIZE DEBT , fe 
+qui xtreg ROA VAIC SIZE DEBT , re 
 estimates store MODEL1
 
 * Model 2
