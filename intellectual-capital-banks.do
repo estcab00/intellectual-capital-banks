@@ -1,7 +1,7 @@
 clear all
 set more off
 
-global ruta "C:\Users\estca\OneDrive\Documentos\Github\intelectual-capital-banks"
+global ruta "C:\Users\estca\OneDrive\Documentos\Github\intellectual-capital-banks"
 
 globa data "$ruta/data"
 
@@ -31,24 +31,24 @@ xtdescribe
 
 xtsum
 
-*** Tenemos un panel balanceado
+*** We have a balanced panel
 
 /*** 2. CORRELATION MATRIX ***/ 
 /* Create a correlation matrix */
 
 pwcorr VAIC HCE SCE CCE SIZE DEBT ROA, sig
 
-/*** 3. PANEL MODEL */
-/* HAUSMAN TEST */
+/*** 3. PANEL MODEL TESTS */
+/* 3.1 HAUSMAN TEST */
 
-*** 3.1 Fixed effects 
+*** Fixed effects 
 qui xtreg ROA VAIC SIZE DEBT , fe 
 estimates store FE1
 
 qui xtreg ROA ICE HCE SCE CCE SIZE DEBT , fe 
 estimates store FE2
 
-*** 3.2 Random effects
+*** Random effects
 * R1
 qui xtreg ROA VAIC SIZE DEBT , re
 estimates store RE1
@@ -57,7 +57,7 @@ estimates store RE1
 qui xtreg ROA ICE HCE SCE CCE SIZE DEBT , re
 estimates store RE2
 
-*** 3.3 Hausman tets
+*** Hausman test
 
 hausman FE1 RE1  
 *Do not reject H0: p-value = 0.39 > 0.05
@@ -69,7 +69,7 @@ hausman FE2  RE2, sigmamore
 
 // For model 1 we will use Random Effects, for model 2 we will use Fixed effects.
 
-/* WOOLDRIDGE AUTOCORRELATION TEST */
+/* 3.2 WOOLDRIDGE AUTOCORRELATION TEST */
 
 xtserial ROA VAIC SIZE DEBT, output
 * We do not reject H0: p-value = 0.76 > 0.05
@@ -79,7 +79,23 @@ xtserial ROA HCE SCE CCE SIZE DEBT, output
 * We do not reject H0: p-value = 0.45 <0.05
 * We choose xtreg
 
-/* FINAL MODELS */
+/* 3.3 VARIANCE INFLATION FACTOR (VIF) */
+qui reg ROA VAIC SIZE DEBT
+vif
+* No multicollinearity
+
+qui reg ROA HCE SCE CCE SIZE DEBT 
+vif
+* No multicollinearity
+
+/* 3.4 BREUSCH-PAGAN */
+qui xtreg ROA VAIC SIZE DEBT , re
+xttest0
+
+qui xtreg ROA HCE SCE CCE SIZE DEBT, re 
+xttest0
+
+/* 3.4 FINAL MODELS */
 
 * Model 1
 qui xtreg ROA VAIC SIZE DEBT , re 
@@ -129,17 +145,17 @@ xtsum
 
 pwcorr VAIC HCE SCE CCE SIZE DEBT ROA, sig
 
-/*** 3. PANEL MODEL */
-/* HAUSMAN TEST */
+/*** 3. PANEL MODEL TESTS */
+/* 3.1 HAUSMAN TEST */
 
-*** 3.1 Fixed effects 
+*** Fixed effects 
 qui xtreg ROA VAIC SIZE DEBT , fe 
 estimates store FE1
 
 qui xtreg ROA ICE HCE SCE CCE SIZE DEBT , fe 
 estimates store FE2
 
-*** 3.2 Random effects
+*** Random effects
 * R1
 qui xtreg ROA VAIC SIZE DEBT , re
 estimates store RE1
@@ -148,7 +164,7 @@ estimates store RE1
 qui xtreg ROA ICE HCE SCE CCE SIZE DEBT , re
 estimates store RE2
 
-*** 3.3 Hausman tets
+*** Hausman test
 
 hausman FE1 RE1  
 *Do not reject H0: p-value = 0.51 > 0.05
@@ -160,7 +176,7 @@ hausman FE2  RE2
 
 // For model 1 we will use Random Effects, for model 2 we will use Fixed effects.
 
-/* WOOLDRIDGE AUTOCORRELATION TEST */
+/* 3.2 WOOLDRIDGE AUTOCORRELATION TEST */
 
 xtserial ROA VAIC SIZE DEBT, output
 * We reject H0: p-value = 0.00 <0.05
@@ -170,7 +186,16 @@ xtserial ROA ICE HCE SCE CCE SIZE DEBT, output
 * We reject H0: p-value = 0.00 <0.05
 * We choose xtregar
 
-/* FINAL MODELS */
+/* 3.3 VARIANCE INFLATION FACTOR (VIF) */
+qui reg ROA VAIC SIZE DEBT
+vif
+* No multicollinearity
+
+qui reg ROA HCE SCE CCE SIZE DEBT 
+vif
+* No multicollinearity
+
+/* 3.4 FINAL MODELS */
 
 * Model 1
 qui xtregar ROA VAIC SIZE DEBT , re 
@@ -219,17 +244,17 @@ xtsum
 
 pwcorr VAIC HCE SCE CCE SIZE DEBT ROA, sig
 
-/*** 3. PANEL MODEL */
-/* HAUSMAN TEST */
+/*** 3. PANEL MODEL TESTS */
+/* 3.1 HAUSMAN TEST */
 
-*** 3.1 Fixed effects 
+*** Fixed effects 
 qui xtreg ROA VAIC SIZE DEBT , fe 
 estimates store FE1
 
 qui xtreg ROA ICE HCE SCE CCE SIZE DEBT , fe 
 estimates store FE2
 
-*** 3.2 Random effects
+*** Random effects
 * R1
 qui xtreg ROA VAIC SIZE DEBT , re
 estimates store RE1
@@ -238,7 +263,7 @@ estimates store RE1
 qui xtreg ROA ICE HCE SCE CCE SIZE DEBT , re
 estimates store RE2
 
-*** 3.3 Hausman tets
+*** Hausman test
 
 hausman FE1 RE1  
 *Do not reject H0: p-value = 0.68 > 0.05
@@ -250,7 +275,7 @@ hausman FE2  RE2
 
 // For model 1 we will use Random Effects, for model 2 we will use Fixed effects.
 
-/* WOOLDRIDGE AUTOCORRELATION TEST */
+/* 3.2 WOOLDRIDGE AUTOCORRELATION TEST */
 
 xtserial ROA VAIC SIZE DEBT, output
 * We do not reject H0: p-value = 0.23 > 0.05
@@ -260,7 +285,16 @@ xtserial ROA ICE HCE SCE CCE SIZE DEBT, output
 * We do not reject H0: p-value = 0.18 > 0.05
 * We choose xtreg
 
-/* FINAL MODELS */
+/* 3.3 VARIANCE INFLATION FACTOR (VIF) */
+qui reg ROA VAIC SIZE DEBT
+vif
+* No multicollinearity
+
+qui reg ROA HCE SCE CCE SIZE DEBT 
+vif
+* No multicollinearity
+
+/* 3.4 FINAL MODELS */
 
 * Model 1
 qui xtreg ROA VAIC SIZE DEBT , re 
@@ -311,17 +345,17 @@ xtsum
 
 pwcorr VAIC HCE SCE CCE SIZE DEBT ROA, sig
 
-/*** 3. PANEL MODEL */
-/* HAUSMAN TEST */
+/*** 3. PANEL MODEL TESTS*/
+/* 3.1 HAUSMAN TEST */
 
-*** 3.1 Fixed effects 
+*** Fixed effects 
 qui xtreg ROA VAIC SIZE DEBT , fe 
 estimates store FE1
 
 qui xtreg ROA ICE HCE SCE CCE SIZE DEBT , fe 
 estimates store FE2
 
-*** 3.2 Random effects
+*** Random effects
 * R1
 qui xtreg ROA VAIC SIZE DEBT , re
 estimates store RE1
@@ -330,7 +364,7 @@ estimates store RE1
 qui xtreg ROA ICE HCE SCE CCE SIZE DEBT , re
 estimates store RE2
 
-*** 3.3 Hausman tets
+*** Hausman test
 
 hausman FE1 RE1, sigmamore  
 *Do not reject H0: p-value = 0.21 > 0.05
@@ -342,7 +376,7 @@ hausman FE2  RE2
 
 // For model 1 we will use Random Effects, for model 2 we will use Fixed effects.
 
-/* WOOLDRIDGE AUTOCORRELATION TEST */
+/* 3.2 WOOLDRIDGE AUTOCORRELATION TEST */
 
 xtserial ROA VAIC SIZE DEBT, output
 * Do not reject H0: p-value = 0.09 > 0.05
@@ -352,7 +386,16 @@ xtserial ROA ICE HCE SCE CCE SIZE DEBT, output
 * Do not reject H0: p-value = 0.55 > 0.05
 * We choose xtreg
 
-/* FINAL MODELS */
+/* 3.3 VARIANCE INFLATION FACTOR (VIF) */
+qui reg ROA VAIC SIZE DEBT
+vif
+* No multicollinearity
+
+qui reg ROA HCE SCE CCE SIZE DEBT 
+vif
+* Multicollinearity between HCE and SCE
+
+/* 3.4 FINAL MODELS */
 
 * Model 1
 qui xtreg ROA VAIC SIZE DEBT , re 
