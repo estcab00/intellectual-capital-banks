@@ -95,6 +95,15 @@ xttest0
 qui xtreg ROA HCE SCE CCE SIZE DEBT, re 
 xttest0
 
+/* 3.5 WALD TEST FOR HETEROSKEDASTICITY */
+xtreg ROA VAIC SIZE DEBT, re
+xttest3
+* If the null hypothesis is rejected (p-value < 0.05), heteroskedasticity is present.
+
+xtreg ROA HCE SCE CCE SIZE DEBT, re
+xttest3
+* If the null hypothesis is rejected (p-value < 0.05), heteroskedasticity is present.
+
 /* 3.4 FINAL MODELS */
 
 * Model 1
