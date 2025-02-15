@@ -5,6 +5,8 @@ global ruta "C:\Users\estca\OneDrive\Documentos\Github\intellectual-capital-bank
 
 globa data "$ruta/data"
 
+global results "$ruta/results"
+
 **************************************************************************************
 * ALL FINANCIAL ENTITIES
 **************************************************************************************
@@ -88,37 +90,43 @@ qui reg ROA HCE SCE CCE SIZE DEBT
 vif
 * No multicollinearity
 
-/* 3.4 BREUSCH-PAGAN */
-qui xtreg ROA VAIC SIZE DEBT , re
-xttest0
+// /* 3.4 BREUSCH-PAGAN */
+// qui xtreg ROA VAIC SIZE DEBT , re
+// xttest0
+//
+// qui xtreg ROA HCE SCE CCE SIZE DEBT, re 
+// xttest0
+//
+// /* 3.5 WALD TEST FOR HETEROSKEDASTICITY */
+// xtreg ROA VAIC SIZE DEBT, re vce(robust)
+// xttest3
+// * If the null hypothesis is rejected (p-value < 0.05), heteroskedasticity is present.
+//
+// xtreg ROA HCE SCE CCE SIZE DEBT, fe
+// xttest3
+// * If the null hypothesis is rejected (p-value < 0.05), heteroskedasticity is present.
 
-qui xtreg ROA HCE SCE CCE SIZE DEBT, re 
-xttest0
-
-/* 3.5 WALD TEST FOR HETEROSKEDASTICITY */
-xtreg ROA VAIC SIZE DEBT, re
-xttest3
-* If the null hypothesis is rejected (p-value < 0.05), heteroskedasticity is present.
-
-xtreg ROA HCE SCE CCE SIZE DEBT, re
-xttest3
-* If the null hypothesis is rejected (p-value < 0.05), heteroskedasticity is present.
-
-/* 3.4 FINAL MODELS */
+/* 3.6 FINAL MODELS */
 
 * Model 1
-qui xtreg ROA VAIC SIZE DEBT , re 
+xtreg ROA VAIC SIZE DEBT, re vce(robust)
 estimates store MODEL1
 
 * Model 2
-qui xtreg ROA HCE SCE CCE SIZE DEBT , fe
+qui xtreg ROA HCE SCE CCE SIZE DEBT , fe vce(robust)
 estimates store MODEL2
 
 
 /*** 4. RESULTS */
 
 estimates table MODEL1 MODEL2,  ///
-  stats(N r2_o r2_b r2_w sigma_u sigma_e rho) b(%7.4f) star  
+  stats(N r2_o r2_b r2_w sigma_u sigma_e rho) b(%7.4f) star 
+  
+esttab MODEL1 MODEL2 ///
+    using "$results/economectric_results_all.doc", replace ///
+    title("Regression Results") ///
+    stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
+    b(%7.4f) star
 
 
 **************************************************************************************
