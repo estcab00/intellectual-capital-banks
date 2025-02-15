@@ -1,20 +1,24 @@
 clear all
 set more off
 
-global ruta "C:\Users\estca\OneDrive\Documentos\Github\intellectual-capital-banks"
+global main "C:\Users\estca\OneDrive\Documentos\Github\intellectual-capital-banks"
 
-globa data "$ruta/data"
+globa data "$main/data"
 
-global results "$ruta/results"
+global results "$main/results"
 
 **************************************************************************************
-* ALL FINANCIAL ENTITIES
+* FINANCIAL ENTITIES
 **************************************************************************************
 
-/*** 1. Import the data ***/
+// First, we analyse all banks, financial firms and cooperative banks that have public information in the Superintendency of the Securities Market (SMV), the equivalent of the Securities and Exchange Commission (SEC) for Peru.  
+
+// We exclude two financial firms: FINANCIERA OH!, FINANCIERA QAPAC and one cooperative bank: CAJA LOS ANDES. These entities have outliers during COVID, and might cause inconsistent results.
+
+/*** 1. PREPARE DATA ***/
 clear all
 
-import excel "$data/data_entidades_final.xlsx", firstrow
+import excel "$data/data_financial_entities.xlsx", firstrow
 
 egen ENTITY_ID = group(ENTITY)
 
@@ -33,12 +37,17 @@ xtdescribe
 
 xtsum
 
-*** We have a balanced panel
+*** Verify we have a balanced panel
 
 /*** 2. CORRELATION MATRIX ***/ 
 /* Create a correlation matrix */
 
 pwcorr VAIC HCE SCE CCE SIZE DEBT ROA, sig
+
+*** Export it to CSV
+corr VAIC HCE SCE CCE SIZE DEBT ROA
+mat C = r(C)
+outsheet using "$results/correlation_matrix_financial_entities.csv", replace
 
 /*** 3. PANEL MODEL TESTS */
 /* 3.1 HAUSMAN TEST */
@@ -90,23 +99,7 @@ qui reg ROA HCE SCE CCE SIZE DEBT
 vif
 * No multicollinearity
 
-// /* 3.4 BREUSCH-PAGAN */
-// qui xtreg ROA VAIC SIZE DEBT , re
-// xttest0
-//
-// qui xtreg ROA HCE SCE CCE SIZE DEBT, re 
-// xttest0
-//
-// /* 3.5 WALD TEST FOR HETEROSKEDASTICITY */
-// xtreg ROA VAIC SIZE DEBT, re vce(robust)
-// xttest3
-// * If the null hypothesis is rejected (p-value < 0.05), heteroskedasticity is present.
-//
-// xtreg ROA HCE SCE CCE SIZE DEBT, fe
-// xttest3
-// * If the null hypothesis is rejected (p-value < 0.05), heteroskedasticity is present.
-
-/* 3.6 FINAL MODELS */
+/* 3.4 FINAL MODELS */
 
 * Model 1
 xtreg ROA VAIC SIZE DEBT, re vce(robust)
@@ -123,7 +116,7 @@ estimates table MODEL1 MODEL2,  ///
   stats(N r2_o r2_b r2_w sigma_u sigma_e rho) b(%7.4f) star 
   
 esttab MODEL1 MODEL2 ///
-    using "$results/economectric_results_all.doc", replace ///
+    using "$results/econometric_results_all.doc", replace ///
     title("Regression Results") ///
     stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
     b(%7.4f) star
@@ -133,10 +126,12 @@ esttab MODEL1 MODEL2 ///
 * BANKS
 **************************************************************************************
 
-/*** 1. Import the data ***/
+// We analyse the fifthteen (15) largest banks in Peru.
+
+/*** 1. PREPARE DATA ***/
 clear all
  
-import excel "$data/data_bancos_final.xlsx", firstrow
+import excel "$data/data_banks.xlsx", firstrow
 
 egen ENTITY_ID = group(ENTITY)
 
@@ -155,12 +150,17 @@ xtdescribe
 
 xtsum
 
-*** We have a balanced panel
+*** Verify we have a balanced panel
 
 /*** 2. CORRELATION MATRIX ***/ 
 /* Create a correlation matrix */
 
 pwcorr VAIC HCE SCE CCE SIZE DEBT ROA, sig
+
+*** Export it to CSV
+corr VAIC HCE SCE CCE SIZE DEBT ROA
+mat C = r(C)
+outsheet using "$results/correlation_matrix_banks.csv", replace
 
 /*** 3. PANEL MODEL TESTS */
 /* 3.1 HAUSMAN TEST */
@@ -215,27 +215,34 @@ vif
 /* 3.4 FINAL MODELS */
 
 * Model 1
-qui xtregar ROA VAIC SIZE DEBT , re 
+qui xtregar ROA VAIC SIZE DEBT, re
 estimates store MODEL1
 
 * Model 2
-qui xtregar ROA HCE SCE CCE SIZE DEBT , fe
+qui xtregar ROA HCE SCE CCE SIZE DEBT, fe
 estimates store MODEL2
-
 
 /*** 4. RESULTS */
 
 estimates table MODEL1 MODEL2,  ///
-  stats(N r2_o r2_b r2_w sigma_u sigma_e rho) b(%7.4f) star  
+  stats(N r2_o r2_b r2_w sigma_u sigma_e rho) b(%7.4f) star
+  
+esttab MODEL1 MODEL2 ///
+    using "$results/econometric_results_banks.doc", replace ///
+    title("Regression Results") ///
+    stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
+    b(%7.4f) star 
 
 **************************************************************************************
 * FINANCING FIRMS 
 **************************************************************************************
 
-/*** 1. Import the data ***/
+// Then, we analyse a total of eight (8) financial firms excluding the previously mentioned FINANCIERA OH! and FINANCIERA QAPAC.
+
+/*** 1. PREPARE DATA ***/
 clear all
 
-import excel "$data/data_financieras_final.xlsx", firstrow
+import excel "$data/data_financial_firms.xlsx", firstrow
 
 egen ENTITY_ID = group(ENTITY)
 
@@ -254,12 +261,17 @@ xtdescribe
 
 xtsum
 
-*** We have a balanced panel
+*** Verify we have a balanced panel
 
 /*** 2. CORRELATION MATRIX ***/ 
 /* Create a correlation matrix */
 
 pwcorr VAIC HCE SCE CCE SIZE DEBT ROA, sig
+
+*** Export it to CSV
+corr VAIC HCE SCE CCE SIZE DEBT ROA
+mat C = r(C)
+outsheet using "$results/correlation_matrix_financial_firms.csv", replace
 
 /*** 3. PANEL MODEL TESTS */
 /* 3.1 HAUSMAN TEST */
@@ -314,11 +326,11 @@ vif
 /* 3.4 FINAL MODELS */
 
 * Model 1
-qui xtreg ROA VAIC SIZE DEBT , re 
+qui xtreg ROA VAIC SIZE DEBT , re vce(robust)
 estimates store MODEL1
 
 * Model 2
-qui xtreg ROA HCE SCE CCE SIZE DEBT , fe
+qui xtreg ROA HCE SCE CCE SIZE DEBT , fe vce(robust)
 estimates store MODEL2
 
 
@@ -327,16 +339,22 @@ estimates store MODEL2
 estimates table MODEL1 MODEL2,  ///
   stats(N r2_o r2_b r2_w sigma_u sigma_e rho) b(%7.4f) star  
 
-
+esttab MODEL1 MODEL2 ///
+    using "$results/econometric_results_financial_firms.doc", replace ///
+    title("Regression Results") ///
+    stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
+    b(%7.4f) star
 
 **************************************************************************************
 * COOPERATIVE BANKS (MUNICIPAL SAVINGS BANKS)
 **************************************************************************************
 
-/*** 1. Import the data ***/
+// Finally, we analyse a total of three (3) cooperative banks excluding the CAJA LOS ANDES due to having huge financial problems during the COVID pandemic and causing inconsistent results.
+
+/*** 1. PREPARE DATA ***/
 clear all
 
-import excel "$data/data_cajas_final.xlsx", firstrow
+import excel "$data/data_cooperative_banks.xlsx", firstrow
 
 egen ENTITY_ID = group(ENTITY)
 
@@ -355,12 +373,17 @@ xtdescribe
 
 xtsum
 
-*** We have a balanced panel
+*** Verify we have a balanced panel
 
 /*** 2. CORRELATION MATRIX ***/ 
 /* Create a correlation matrix */
 
 pwcorr VAIC HCE SCE CCE SIZE DEBT ROA, sig
+
+*** Export it to CSV
+corr VAIC HCE SCE CCE SIZE DEBT ROA
+mat C = r(C)
+outsheet using "$results/correlation_matrix_cooperative_banks.csv", replace
 
 /*** 3. PANEL MODEL TESTS*/
 /* 3.1 HAUSMAN TEST */
@@ -415,11 +438,11 @@ vif
 /* 3.4 FINAL MODELS */
 
 * Model 1
-qui xtreg ROA VAIC SIZE DEBT , re 
+qui xtreg ROA VAIC SIZE DEBT , re vce(robust)
 estimates store MODEL1
 
 * Model 2
-qui xtreg ROA HCE SCE CCE SIZE DEBT , re
+qui xtreg ROA HCE SCE CCE SIZE DEBT , re vce(robust)
 estimates store MODEL2
 
 
@@ -428,3 +451,8 @@ estimates store MODEL2
 estimates table MODEL1 MODEL2,  ///
   stats(N r2_o r2_b r2_w sigma_u sigma_e rho) b(%7.4f) star  
 
+esttab MODEL1 MODEL2 ///
+    using "$results/econometric_cooperative_banks.doc", replace ///
+    title("Regression Results") ///
+    stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
+    b(%7.4f) star
