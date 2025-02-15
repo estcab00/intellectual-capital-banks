@@ -49,7 +49,7 @@ corr VAIC HCE SCE CCE SIZE DEBT ROA
 mat C = r(C)
 outsheet using "$results/correlation_matrix_financial_entities.csv", replace
 
-/*** 3. PANEL MODEL TESTS */
+/*** 3. PANEL MODEL TESTS ***/
 /* 3.1 HAUSMAN TEST */
 
 *** Fixed effects 
@@ -101,27 +101,57 @@ vif
 
 /* 3.4 FINAL MODELS */
 
-* Model 1
+* Model 1 - Using VAIC
 xtreg ROA VAIC SIZE DEBT, re vce(robust)
 estimates store MODEL1
 
-* Model 2
+* Model 2 - Using HCE, SCE, and CCE
 qui xtreg ROA HCE SCE CCE SIZE DEBT , fe vce(robust)
 estimates store MODEL2
 
 
-/*** 4. RESULTS */
+/*** 4. RESULTS ***/
 
 estimates table MODEL1 MODEL2,  ///
   stats(N r2_o r2_b r2_w sigma_u sigma_e rho) b(%7.4f) star 
   
 esttab MODEL1 MODEL2 ///
-    using "$results/econometric_results_all.doc", replace ///
+    using "$results/econometric_results_financial_entities.doc", replace ///
+    title("Regression Results") ///
+    stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
+    b(%7.4f) star
+	
+/*** 5. ROBUSTNESS ***/
+
+/* 5.1  PRAIS-WINSTEN */
+* Model 1 - Using VAIC
+xtpcse ROA VAIC SIZE DEBT, pairwise hetonly cor(ar1)
+estimates store PW_MODEL1
+
+* Model 2 - Using HCE, SCE, and CCE
+xtpcse ROA HCE SCE CCE SIZE DEBT, pairwise hetonly cor(ar1)
+estimates store PW_MODEL2
+
+/* 5.2  GENERALIZED LEAST SQUARES  */
+* Model 1 - FGLS with VAIC
+xtgls ROA VAIC SIZE DEBT, panels(heteroskedastic) corr(ar1)
+estimates store FGLS_MODEL1
+
+* Model 2 - FGLS with HCE, SCE, and CCE
+xtgls ROA HCE SCE CCE SIZE DEBT, panels(heteroskedastic) corr(ar1)
+estimates store FGLS_MODEL2
+
+estimates table MODEL1 MODEL2 PW_MODEL1 PW_MODEL2 FGLS_MODEL1 FGLS_MODEL2, ///
+  stats(N r2_o sigma_u sigma_e rho) b(%7.4f) star
+  
+esttab MODEL1 MODEL2 ///
+    using "$results/robustness_checks_financial_entities.doc", replace ///
     title("Regression Results") ///
     stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
     b(%7.4f) star
 
-
+	
+		
 **************************************************************************************
 * BANKS
 **************************************************************************************
@@ -162,7 +192,7 @@ corr VAIC HCE SCE CCE SIZE DEBT ROA
 mat C = r(C)
 outsheet using "$results/correlation_matrix_banks.csv", replace
 
-/*** 3. PANEL MODEL TESTS */
+/*** 3. PANEL MODEL TESTS ***/
 /* 3.1 HAUSMAN TEST */
 
 *** Fixed effects 
@@ -222,7 +252,7 @@ estimates store MODEL1
 qui xtregar ROA HCE SCE CCE SIZE DEBT, fe
 estimates store MODEL2
 
-/*** 4. RESULTS */
+/*** 4. RESULTS ***/
 
 estimates table MODEL1 MODEL2,  ///
   stats(N r2_o r2_b r2_w sigma_u sigma_e rho) b(%7.4f) star
@@ -231,8 +261,39 @@ esttab MODEL1 MODEL2 ///
     using "$results/econometric_results_banks.doc", replace ///
     title("Regression Results") ///
     stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
-    b(%7.4f) star 
+    b(%7.4f) star
+	
+/*** 5. ROBUSTNESS ***/
 
+/* 5.1  PRAIS-WINSTEN */
+* Model 1 - Using VAIC
+xtpcse ROA VAIC SIZE DEBT, pairwise hetonly cor(ar1)
+estimates store PW_MODEL1
+
+* Model 2 - Using HCE, SCE, and CCE
+xtpcse ROA HCE SCE CCE SIZE DEBT, pairwise hetonly cor(ar1)
+estimates store PW_MODEL2
+
+/* 5.2  GENERALIZED LEAST SQUARES  */
+* Model 1 - FGLS with VAIC
+xtgls ROA VAIC SIZE DEBT, panels(heteroskedastic) corr(ar1)
+estimates store FGLS_MODEL1
+
+* Model 2 - FGLS with HCE, SCE, and CCE
+xtgls ROA HCE SCE CCE SIZE DEBT, panels(heteroskedastic) corr(ar1)
+estimates store FGLS_MODEL2
+
+estimates table MODEL1 MODEL2 PW_MODEL1 PW_MODEL2 FGLS_MODEL1 FGLS_MODEL2, ///
+  stats(N r2_o sigma_u sigma_e rho) b(%7.4f) star
+  
+esttab MODEL1 MODEL2 ///
+    using "$results/robustness_checks_banks.doc", replace ///
+    title("Regression Results") ///
+    stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
+    b(%7.4f) star
+
+	
+	
 **************************************************************************************
 * FINANCING FIRMS 
 **************************************************************************************
@@ -273,7 +334,7 @@ corr VAIC HCE SCE CCE SIZE DEBT ROA
 mat C = r(C)
 outsheet using "$results/correlation_matrix_financial_firms.csv", replace
 
-/*** 3. PANEL MODEL TESTS */
+/*** 3. PANEL MODEL TESTS ***/
 /* 3.1 HAUSMAN TEST */
 
 *** Fixed effects 
@@ -334,7 +395,7 @@ qui xtreg ROA HCE SCE CCE SIZE DEBT , fe vce(robust)
 estimates store MODEL2
 
 
-/*** 4. RESULTS */
+/*** 4. RESULTS ***/
 
 estimates table MODEL1 MODEL2,  ///
   stats(N r2_o r2_b r2_w sigma_u sigma_e rho) b(%7.4f) star  
@@ -344,6 +405,37 @@ esttab MODEL1 MODEL2 ///
     title("Regression Results") ///
     stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
     b(%7.4f) star
+	
+/*** 5. ROBUSTNESS ***/
+
+/* 5.1  PRAIS-WINSTEN */
+* Model 1 - Using VAIC
+xtpcse ROA VAIC SIZE DEBT, pairwise hetonly cor(ar1)
+estimates store PW_MODEL1
+
+* Model 2 - Using HCE, SCE, and CCE
+xtpcse ROA HCE SCE CCE SIZE DEBT, pairwise hetonly cor(ar1)
+estimates store PW_MODEL2
+
+/* 5.2  GENERALIZED LEAST SQUARES  */
+* Model 1 - FGLS with VAIC
+xtgls ROA VAIC SIZE DEBT, panels(heteroskedastic) corr(ar1)
+estimates store FGLS_MODEL1
+
+* Model 2 - FGLS with HCE, SCE, and CCE
+xtgls ROA HCE SCE CCE SIZE DEBT, panels(heteroskedastic) corr(ar1)
+estimates store FGLS_MODEL2
+
+estimates table MODEL1 MODEL2 PW_MODEL1 PW_MODEL2 FGLS_MODEL1 FGLS_MODEL2, ///
+  stats(N r2_o sigma_u sigma_e rho) b(%7.4f) star
+  
+esttab MODEL1 MODEL2 ///
+    using "$results/robustness_checks_financial_firms.doc", replace ///
+    title("Regression Results") ///
+    stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
+    b(%7.4f) star
+	
+	
 
 **************************************************************************************
 * COOPERATIVE BANKS (MUNICIPAL SAVINGS BANKS)
@@ -385,7 +477,7 @@ corr VAIC HCE SCE CCE SIZE DEBT ROA
 mat C = r(C)
 outsheet using "$results/correlation_matrix_cooperative_banks.csv", replace
 
-/*** 3. PANEL MODEL TESTS*/
+/*** 3. PANEL MODEL TESTS ***/
 /* 3.1 HAUSMAN TEST */
 
 *** Fixed effects 
@@ -446,13 +538,45 @@ qui xtreg ROA HCE SCE CCE SIZE DEBT , re vce(robust)
 estimates store MODEL2
 
 
-/*** 4. RESULTS */
+/*** 4. RESULTS ***/
 
 estimates table MODEL1 MODEL2,  ///
   stats(N r2_o r2_b r2_w sigma_u sigma_e rho) b(%7.4f) star  
 
 esttab MODEL1 MODEL2 ///
-    using "$results/econometric_cooperative_banks.doc", replace ///
+    using "$results/econometric_results_cooperative_banks.doc", replace ///
     title("Regression Results") ///
     stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
     b(%7.4f) star
+	
+/*** 5. ROBUSTNESS ***/
+
+/* 5.1  PRAIS-WINSTEN */
+* Model 1 - Using VAIC
+xtpcse ROA VAIC SIZE DEBT, pairwise hetonly cor(ar1)
+estimates store PW_MODEL1
+
+* Model 2 - Using HCE, SCE, and CCE
+xtpcse ROA HCE SCE CCE SIZE DEBT, pairwise hetonly cor(ar1)
+estimates store PW_MODEL2
+
+/* 5.2  GENERALIZED LEAST SQUARES  */
+* Model 1 - FGLS with VAIC
+xtgls ROA VAIC SIZE DEBT, panels(heteroskedastic) corr(ar1)
+estimates store FGLS_MODEL1
+
+* Model 2 - FGLS with HCE, SCE, and CCE
+xtgls ROA HCE SCE CCE SIZE DEBT, panels(heteroskedastic) corr(ar1)
+estimates store FGLS_MODEL2
+
+estimates table MODEL1 MODEL2 PW_MODEL1 PW_MODEL2 FGLS_MODEL1 FGLS_MODEL2, ///
+  stats(N r2_o sigma_u sigma_e rho) b(%7.4f) star
+  
+esttab MODEL1 MODEL2 ///
+    using "$results/robustness_checks_cooperative_banks.doc", replace ///
+    title("Regression Results") ///
+    stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
+    b(%7.4f) star
+
+	
+	
