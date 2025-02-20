@@ -123,12 +123,16 @@ esttab MODEL1 MODEL2 ///
 	
 /*** 5. ROBUSTNESS ***/
 
+// To further validate our benchmark results, we conduct robustness checks using alternative estimation methods.
+// We first estimate the two models using a Prais-Winsten (PW) regression, which corrects for AR(1) serial correlation in the error term.
+// We then implement a Generalized Least Squares (FGLS) approach that accounts for both heteroskedasticity across panels and serial correlation.
+
 /* 5.1  PRAIS-WINSTEN */
-* Model 1 - Using VAIC
+* Model 1 - PW with VAIC
 xtpcse ROA VAIC SIZE DEBT, pairwise hetonly cor(ar1)
 estimates store PW_MODEL1
 
-* Model 2 - Using HCE, SCE, and CCE
+* Model 2 - PW with HCE, SCE, and CCE
 xtpcse ROA HCE SCE CCE SIZE DEBT, pairwise hetonly cor(ar1)
 estimates store PW_MODEL2
 
@@ -244,11 +248,11 @@ vif
 
 /* 3.4 FINAL MODELS */
 
-* Model 1
+* Model 1 - Using VAIC
 qui xtregar ROA VAIC SIZE DEBT, re
 estimates store MODEL1
 
-* Model 2
+* Model 2 - Using HCE, SCE, and CCE
 qui xtregar ROA HCE SCE CCE SIZE DEBT, fe
 estimates store MODEL2
 
@@ -265,12 +269,16 @@ esttab MODEL1 MODEL2 ///
 	
 /*** 5. ROBUSTNESS ***/
 
+// To further validate our benchmark results, we conduct robustness checks using alternative estimation methods.
+// We first estimate the two models using a Prais-Winsten (PW) regression, which corrects for AR(1) serial correlation in the error term.
+// We then implement a Generalized Least Squares (FGLS) approach that accounts for both heteroskedasticity across panels and serial correlation.
+
 /* 5.1  PRAIS-WINSTEN */
-* Model 1 - Using VAIC
+* Model 1 - PW with VAIC
 xtpcse ROA VAIC SIZE DEBT, pairwise hetonly cor(ar1)
 estimates store PW_MODEL1
 
-* Model 2 - Using HCE, SCE, and CCE
+* Model 2 - PW with HCE, SCE, and CCE
 xtpcse ROA HCE SCE CCE SIZE DEBT, pairwise hetonly cor(ar1)
 estimates store PW_MODEL2
 
@@ -386,11 +394,11 @@ vif
 
 /* 3.4 FINAL MODELS */
 
-* Model 1
+* Model 1 - Using VAIC
 qui xtreg ROA VAIC SIZE DEBT , re vce(robust)
 estimates store MODEL1
 
-* Model 2
+* Model 2 - Using HCE, SCE, and CCE
 qui xtreg ROA HCE SCE CCE SIZE DEBT , fe vce(robust)
 estimates store MODEL2
 
@@ -408,12 +416,16 @@ esttab MODEL1 MODEL2 ///
 	
 /*** 5. ROBUSTNESS ***/
 
+// To further validate our benchmark results, we conduct robustness checks using alternative estimation methods.
+// We first estimate the two models using a Prais-Winsten (PW) regression, which corrects for AR(1) serial correlation in the error term.
+// We then implement a Generalized Least Squares (FGLS) approach that accounts for both heteroskedasticity across panels and serial correlation.
+
 /* 5.1  PRAIS-WINSTEN */
-* Model 1 - Using VAIC
+* Model 1 - PW with VAIC
 xtpcse ROA VAIC SIZE DEBT, pairwise hetonly cor(ar1)
 estimates store PW_MODEL1
 
-* Model 2 - Using HCE, SCE, and CCE
+* Model 2 - PW with HCE, SCE, and CCE
 xtpcse ROA HCE SCE CCE SIZE DEBT, pairwise hetonly cor(ar1)
 estimates store PW_MODEL2
 
@@ -529,11 +541,11 @@ vif
 
 /* 3.4 FINAL MODELS */
 
-* Model 1
+* Model 1 - Using VAIC
 qui xtreg ROA VAIC SIZE DEBT , re vce(robust)
 estimates store MODEL1
 
-* Model 2
+* Model 2 - Using HCE, SCE, and CCE
 qui xtreg ROA HCE SCE CCE SIZE DEBT , re vce(robust)
 estimates store MODEL2
 
@@ -551,12 +563,16 @@ esttab MODEL1 MODEL2 ///
 	
 /*** 5. ROBUSTNESS ***/
 
+// To further validate our benchmark results, we conduct robustness checks using alternative estimation methods.
+// We first estimate the two models using a Prais-Winsten (PW) regression, which corrects for AR(1) serial correlation in the error term.
+// We then implement a Generalized Least Squares (FGLS) approach that accounts for both heteroskedasticity across panels and serial correlation.
+
 /* 5.1  PRAIS-WINSTEN */
-* Model 1 - Using VAIC
+* Model 1 - PW with VAIC
 xtpcse ROA VAIC SIZE DEBT, pairwise hetonly cor(ar1)
 estimates store PW_MODEL1
 
-* Model 2 - Using HCE, SCE, and CCE
+* Model 2 - PW with HCE, SCE, and CCE
 xtpcse ROA HCE SCE CCE SIZE DEBT, pairwise hetonly cor(ar1)
 estimates store PW_MODEL2
 
@@ -572,7 +588,7 @@ estimates store FGLS_MODEL2
 estimates table MODEL1 MODEL2 PW_MODEL1 PW_MODEL2 FGLS_MODEL1 FGLS_MODEL2, ///
   stats(N r2_o sigma_u sigma_e rho) b(%7.4f) star
   
-esttab MODEL1 MODEL2 ///
+esttab ODEL1 MODEL2 PW_MODEL1 PW_MODEL2 FGLS_MODEL1 FGLS_MODEL2 ///
     using "$results/robustness_checks_cooperative_banks.doc", replace ///
     title("Regression Results") ///
     stats(N r2_o r2_b r2_w sigma_u sigma_e rho) ///
